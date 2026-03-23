@@ -1,0 +1,55 @@
+import random, time, os
+
+# ================= CONFIG =================
+START_POINTS = 100
+WIN_POINTS = 10
+LOSE_POINTS = -10
+HIGHSCORE_FILE = "blackjack_highscores.txt"
+
+SUITS = ["♠", "♥", "♦", "♣"]
+RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+
+DIFFICULTY = {
+    "1": {"name": "Easy", "stand": 16, "soft17": False, "shuffle": 1},
+    "2": {"name": "Medium", "stand": 17, "soft17": False, "shuffle": 3},
+    "3": {"name": "Hard", "stand": 17, "soft17": True,  "shuffle": 6},
+}
+
+# ================ COLOURS =================
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+END = "\033[0m"
+
+def colour(card):
+    r, s = card
+    if s in ["♥", "♦"]:
+        return f"{RED}{r}{s}{END}"
+    return f"{BLUE}{r}{s}{END}"
+
+# ================ DECK ====================
+def create_deck():
+    deck = [(r, s) for s in SUITS for r in RANKS]
+    random.shuffle(deck)
+    return deck
+
+def card_value(card):
+    r, _ = card
+    if r in ["J","Q","K"]: return 10
+    if r == "A": return 11
+    return int(r)
+
+def hand_value(hand):
+    total = sum(card_value(c) for c in hand)
+    aces = sum(1 for c in hand if c[0] == "A")
+    while total > 21 and aces:
+        total -= 10
+        aces -= 1
+    return total
+
+def is_soft(hand):
+    return any(c[0]=="A" for c in hand) and hand_value(hand)<=21
+
+def show(hand):
+    return " ".join(colour(c) for c in hand)
