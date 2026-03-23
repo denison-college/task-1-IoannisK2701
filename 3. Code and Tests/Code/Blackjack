@@ -54,6 +54,8 @@ def is_soft(hand):
 def show(hand):
     return " ".join(colour(c) for c in hand)
 
+# ================ HIGHSCORES ================
+
 def load_scores():
     scores = {"Easy": [], "Medium": [], "Hard": []}
 
@@ -93,6 +95,8 @@ def save_score(diff, name, score):
             for entry in scores[d]:
                 f.write(f"{d}|{entry['name']}|{entry['score']}\n")
 
+# ================ Game Engine ================
+
 class Blackjack:
     def __init__(self):
         self.points = START_POINTS
@@ -129,3 +133,12 @@ class Blackjack:
 
         hands = [player]
         results = []
+
+        # -------- SPLIT --------
+        
+        if player[0][0] == player[1][0]:
+            c = input("Split? (y/n): ").lower()
+            if c=="y":
+                h1 = [player[0], self.draw()]
+                h2 = [player[1], self.draw()]
+                hands = [h1,h2]
