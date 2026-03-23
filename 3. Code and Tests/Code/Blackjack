@@ -53,3 +53,42 @@ def is_soft(hand):
 
 def show(hand):
     return " ".join(colour(c) for c in hand)
+
+def load_scores():
+    scores = {"Easy": [], "Medium": [], "Hard": []}
+
+    if not os.path.exists(HIGHSCORE_FILE):
+        return scores
+
+    with open(HIGHSCORE_FILE, "r") as f:
+        lines = f.readlines()
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            diff, name, score = line.split("|")
+            score = int(score)
+            if diff in scores:
+                scores[diff].append({"name": name, "score": score})
+        except ValueError:
+            continue
+
+    for diff in scores:
+        scores[diff] = sorted(scores[diff], key=lambda x: x["score"], reverse=True)[:5]
+
+    return scores
+
+
+def save_score(diff, name, score):
+    scores = load_scores()
+
+    scores[diff].append({"name": name, "score": score})
+    scores[diff] = sorted(scores[diff], key=lambda x: x["score"], reverse=True)[:5]
+
+    with open(HIGHSCORE_FILE, "w") as f:
+        for d in scores:
+            for entry in scores[d]:
+                f.write(f"{d}|{entry['name']}|{entry['score']}\n")
