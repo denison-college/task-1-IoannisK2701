@@ -92,3 +92,40 @@ def save_score(diff, name, score):
         for d in scores:
             for entry in scores[d]:
                 f.write(f"{d}|{entry['name']}|{entry['score']}\n")
+
+class Blackjack:
+    def __init__(self):
+        self.points = START_POINTS
+        self.rounds = 0
+        self.session_start = time.time()
+
+        print("\nSelect Difficulty:")
+        print("1 - Easy\n2 - Medium\n3 - Hard")
+        self.diff_key = input("> ")
+        self.diff = DIFFICULTY[self.diff_key]
+        self.diff_name = self.diff["name"]
+
+        self.deck = create_deck()
+
+    def shuffle_check(self):
+        if self.rounds % self.diff["shuffle"] == 0:
+            self.deck = create_deck()
+            print(f"\n{YELLOW}Deck shuffled.{END}")
+
+    def draw(self):
+        if not self.deck:
+            self.deck = create_deck()
+        return self.deck.pop()
+
+    def play_round(self):
+        round_start = time.time()
+        self.shuffle_check()
+
+        player = [self.draw(), self.draw()]
+        dealer = [self.draw(), self.draw()]
+
+        print(f"\nDealer shows: {colour(dealer[0])}")
+        print(f"Your hand: {show(player)} ({hand_value(player)})")
+
+        hands = [player]
+        results = []
