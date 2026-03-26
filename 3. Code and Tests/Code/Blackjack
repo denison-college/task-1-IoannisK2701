@@ -165,3 +165,62 @@ class Blackjack:
                     break
 
             results.append({"hand":hand,"double":doubled})
+          # -------- DEALER PLAY --------
+            print(f"\nDealer hand: {show(dealer)} ({hand_value(dealer)})")
+
+        while True:
+            dval = hand_value(dealer)
+            if dval < self.diff["stand"]:
+                dealer.append(self.draw())
+            elif dval == 17 and self.diff["soft17"] and is_soft(dealer):
+                dealer.append(self.draw())
+            else:
+                break
+
+        print(f"Dealer final: {show(dealer)} ({hand_value(dealer)})")
+
+        dealer_score = hand_value(dealer)
+        net = 0
+
+        for r in results:
+            p = hand_value(r["hand"])
+            if p>21:
+                net += LOSE_POINTS
+            elif dealer_score>21 or p>dealer_score:
+                net += WIN_POINTS * (2 if r["double"] else 1)
+                print(f"{GREEN}WIN{END}")
+            elif p<dealer_score:
+                net += LOSE_POINTS
+                print(f"{RED}LOSE{END}")
+            else:
+                print(f"{YELLOW}PUSH{END}")
+
+        self.points += net
+        self.rounds += 1
+
+        round_time = time.time() - round_start
+        print(f"Round time: {round_time:.2f}s")
+        print(f"Points: {self.points}")
+
+    def run(self):
+        print(f"\n=== BLACKJACK SESSION ({self.diff_name}) ===")
+        name = input("Enter player name: ")
+
+        while self.points > 0:
+            self.play_round()
+            if self.points <= 0:
+                break
+            c = input("\nNext round? (y/n): ").lower()
+            if c!="y":
+                break
+
+        session_time = time.time() - self.session_start
+        print(f"\nSession ended. Time: {session_time:.2f}s")
+        print(f"Final score: {self.points}")
+
+        save_score(self.diff_name, name, self.points)
+
+        print("\nHighscores:")
+        scores = load_scores()[self.diff_name]
+        for i,s in enumerate(scores,1):
+            print(f"{i}. {s['name']} - {s['score']}")
