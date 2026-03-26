@@ -224,3 +224,58 @@ class Blackjack:
         scores = load_scores()[self.diff_name]
         for i,s in enumerate(scores,1):
             print(f"{i}. {s['name']} - {s['score']}")
+
+            #   ====== MENU ======#
+def show_menu():
+    print("\n=== BLACKJACK MENU ===")
+    print("1 - Start Game")
+    print("2 - Instructions")
+    print("3 - View Highscores")
+    print("4 - Exit")
+    return input("> ")
+
+def show_instructions():
+    print("\n=== INSTRUCTIONS ===")
+    print("• Try to get as close to 21 as possible without going over.")
+    print("• Dealer stands based on difficulty settings.")
+    print("• You may hit, stand, or double.")
+    print("• Splitting is allowed when your first two cards match.")
+    print("• Points are gained/lost each round.")
+    print("• Game ends when you run out of points or choose to stop.")
+    input("\nPress Enter to return to menu...")
+
+def show_highscores():
+    print("\n=== HIGHSCORES ===")
+    scores = load_scores()
+
+    for diff in ["Easy", "Medium", "Hard"]:
+        print(f"\n{diff}:")
+        if not scores[diff]:
+            print("  No scores yet.")
+            continue
+
+        for i, entry in enumerate(scores[diff], 1):
+            print(f"  {i}. {entry['name']} - {entry['score']}")
+
+    input("\nPress Enter to return to menu...")
+    # ============== RUN =======================
+if __name__ == "__main__":
+    while True:
+        choice = show_menu()
+
+        if choice == "1":
+            game = Blackjack()
+            game.run()
+
+        elif choice == "2":
+            show_instructions()
+
+        elif choice == "3":
+            show_highscores()
+
+        elif choice == "4":
+            print("Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Try again.")
