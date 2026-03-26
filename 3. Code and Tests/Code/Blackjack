@@ -142,3 +142,26 @@ class Blackjack:
                 h1 = [player[0], self.draw()]
                 h2 = [player[1], self.draw()]
                 hands = [h1,h2]
+        # -------- PLAYER PLAY --------
+        for i, hand in enumerate(hands):
+            doubled = False
+            while True:
+                print(f"\nHand {i+1}: {show(hand)} ({hand_value(hand)})")
+                print("Options: hit, stand, double")
+                move = input("> ").lower()
+
+                if move=="hit":
+                    hand.append(self.draw())
+                    if hand_value(hand)>21:
+                        print(f"{RED}BUST!{END}")
+                        break
+
+                elif move=="double":
+                    hand.append(self.draw())
+                    doubled = True
+                    break
+
+                elif move=="stand":
+                    break
+
+            results.append({"hand":hand,"double":doubled})
